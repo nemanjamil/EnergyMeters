@@ -24,6 +24,8 @@ public class GlavnaAktivnost extends AppCompatActivity {
             }
         });
 
+        // komentar
+
     }
 
 
