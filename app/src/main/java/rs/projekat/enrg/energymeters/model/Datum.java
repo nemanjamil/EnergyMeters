@@ -11,6 +11,7 @@ public class Datum {
     @SerializedName("IpAddress")
     @Expose
     private String ipAddress;
+
     @SerializedName("IdSmetersId")
     @Expose
     private String idSmetersId;

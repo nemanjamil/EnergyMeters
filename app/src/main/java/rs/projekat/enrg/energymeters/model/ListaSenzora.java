@@ -1,4 +1,3 @@
-
 package rs.projekat.enrg.energymeters.model;
 
 import java.util.ArrayList;
@@ -15,15 +14,19 @@ public class ListaSenzora {
     @SerializedName("tag")
     @Expose
     private String tag;
+
     @SerializedName("success")
     @Expose
     private Boolean success;
+
     @SerializedName("error")
     @Expose
     private Integer error;
+
     @SerializedName("error_msg")
     @Expose
     private String errorMsg;
+
     @SerializedName("data")
     @Expose
     private List<Datum> data = new ArrayList<Datum>();
