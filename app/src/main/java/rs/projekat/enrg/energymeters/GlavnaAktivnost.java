@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import rs.projekat.enrg.energymeters.common.EndPoints;
+import rs.projekat.enrg.energymeters.dialogs.ProgressDialogCustom;
 import rs.projekat.enrg.energymeters.model.ListaSenzora;
 import rs.projekat.enrg.energymeters.network.PullWebContent;
 import rs.projekat.enrg.energymeters.network.VolleySingleton;
@@ -16,6 +17,7 @@ import rs.projekat.enrg.energymeters.network.WebRequestCallbackInterface;
 public class GlavnaAktivnost extends AppCompatActivity {
 
     private VolleySingleton mVolleySingleton;
+    private ProgressDialogCustom progressDialogCustom; // ovde smo deklarisali objekat. Trebace nam jedan objekat tog tipa,,,,
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +26,8 @@ public class GlavnaAktivnost extends AppCompatActivity {
 
         Button btn1 = (Button) findViewById(R.id.button1);
         final TextView tv1 = (TextView) findViewById(R.id.tv1);
+
+        progressDialogCustom = new ProgressDialogCustom(this);  // ovde smo ga napravili. I definisali smo my gazdu THIS
 
 
         // prvo pravimo objekata koji ce nesto da radi
@@ -46,13 +50,17 @@ public class GlavnaAktivnost extends AppCompatActivity {
             // sta ako je uspesno
             @Override
             public void webRequestSuccess(boolean success, ListaSenzora listaSenzora) {
+
+                //progressDialogCustom.hideDialog();
+
                 if (success) {
                     // ako ima podataka
-                    Toast.makeText(GlavnaAktivnost.this,"Sve je ok",Toast.LENGTH_LONG).show();
+                    Toast.makeText(GlavnaAktivnost.this, "Sve je ok " + listaSenzora.getTag(), Toast.LENGTH_LONG).show();
+
 
                 } else {
                     // ako nema nista
-                    Toast.makeText(GlavnaAktivnost.this,"Nema podataka u JSON",Toast.LENGTH_LONG).show();
+                    Toast.makeText(GlavnaAktivnost.this, "Nema podataka u JSON", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -60,12 +68,12 @@ public class GlavnaAktivnost extends AppCompatActivity {
             // ako je fail
             @Override
             public void webRequestError(String error) {
-                Toast.makeText(GlavnaAktivnost.this,"Nesto je prslo",Toast.LENGTH_LONG).show();
+
+                progressDialogCustom.hideDialog();
+                Toast.makeText(GlavnaAktivnost.this, "Nešto je prslo", Toast.LENGTH_LONG).show();
+                tv1.setText(error);
             }
         });
-
-
-
 
 
         btn1.setOnClickListener(new View.OnClickListener() {
@@ -73,11 +81,11 @@ public class GlavnaAktivnost extends AppCompatActivity {
             public void onClick(View view) {
                 tv1.setText("Nesto Upisi");
                 // Sada iniciramo povlacenje
+                progressDialogCustom.setMessage("Uvlacenje Podataka");
                 webcontent.pullList();
 
             }
         });
-
 
 
     }
