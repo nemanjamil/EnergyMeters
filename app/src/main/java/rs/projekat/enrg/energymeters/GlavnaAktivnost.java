@@ -26,13 +26,6 @@ public class GlavnaAktivnost extends AppCompatActivity {
         final TextView tv1 = (TextView) findViewById(R.id.tv1);
 
 
-        btn1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                tv1.setText("Nesto Upisi");
-            }
-        });
-
         // prvo pravimo objekata koji ce nesto da radi
         // napravi nam objekat za voley // a volay sluzi da pravi webRequest
         mVolleySingleton = VolleySingleton.getsInstance(this);
@@ -41,7 +34,10 @@ public class GlavnaAktivnost extends AppCompatActivity {
         // sta gadjam sa praznom gajbom. Trazim Lav ili Koka kolu .... i to mi je URLLISTASENZORA
         // mVolleySingleton - je prodavacica koja donosi flajke, ali ne stavlja u gajbu
         // u gajbu trpa flajke PullWebContent
-        PullWebContent<ListaSenzora> webcontent = new PullWebContent<ListaSenzora>(ListaSenzora.class, EndPoints.URLLISTASENZORA, mVolleySingleton);
+
+        // stavili smo final da kada smo jedno napravili objekata necemo menjati da je webcontent nesto drugo
+        // tj. webcontetn mora uved da bude webcontent = new PullWebContent<ListaS .....
+        final PullWebContent<ListaSenzora> webcontent = new PullWebContent<ListaSenzora>(ListaSenzora.class, EndPoints.URLLISTASENZORA, mVolleySingleton);
 
         // sada odredjumeo sa se radi sa punom gajbom pića
         // i sta se radi ako pukne flasa ili nesto ne radi
@@ -69,8 +65,18 @@ public class GlavnaAktivnost extends AppCompatActivity {
         });
 
 
-        // Sada iniciramo povlacenje
-        webcontent.pullList();
+
+
+
+        btn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tv1.setText("Nesto Upisi");
+                // Sada iniciramo povlacenje
+                webcontent.pullList();
+
+            }
+        });
 
 
 
