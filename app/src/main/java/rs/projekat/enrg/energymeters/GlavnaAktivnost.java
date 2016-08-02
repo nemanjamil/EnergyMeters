@@ -51,12 +51,11 @@ public class GlavnaAktivnost extends AppCompatActivity {
             @Override
             public void webRequestSuccess(boolean success, ListaSenzora listaSenzora) {
 
-                //progressDialogCustom.hideDialog();
+                progressDialogCustom.hideDialog();
 
                 if (success) {
                     // ako ima podataka
                     Toast.makeText(GlavnaAktivnost.this, "Sve je ok " + listaSenzora.getTag(), Toast.LENGTH_LONG).show();
-
 
                 } else {
                     // ako nema nista
@@ -81,7 +80,7 @@ public class GlavnaAktivnost extends AppCompatActivity {
             public void onClick(View view) {
                 tv1.setText("Nesto Upisi");
                 // Sada iniciramo povlacenje
-                progressDialogCustom.setMessage("Uvlacenje Podataka");
+                progressDialogCustom.showDialog("Uvlacenje Podataka");
                 webcontent.pullList();
 
             }
