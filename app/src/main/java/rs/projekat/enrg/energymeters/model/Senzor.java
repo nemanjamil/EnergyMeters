@@ -1,12 +1,10 @@
 package rs.projekat.enrg.energymeters.model;
 
-import javax.annotation.Generated;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 
-public class Datum {
+public class Senzor {
 
     @SerializedName("IpAddress")
     @Expose

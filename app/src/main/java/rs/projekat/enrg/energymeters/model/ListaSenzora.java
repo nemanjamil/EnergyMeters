@@ -3,8 +3,6 @@ package rs.projekat.enrg.energymeters.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Generated;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -29,7 +27,7 @@ public class ListaSenzora {
 
     @SerializedName("data")
     @Expose
-    private List<Datum> data = new ArrayList<Datum>();
+    private List<Senzor> data = new ArrayList<Senzor>();
 
     /**
      * @return The tag
@@ -90,14 +88,14 @@ public class ListaSenzora {
     /**
      * @return The data
      */
-    public List<Datum> getData() {
+    public List<Senzor> getData() {
         return data;
     }
 
     /**
      * @param data The data
      */
-    public void setData(List<Datum> data) {
+    public void setData(List<Senzor> data) {
         this.data = data;
     }
 
