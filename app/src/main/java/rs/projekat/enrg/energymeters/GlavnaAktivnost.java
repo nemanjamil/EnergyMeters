@@ -3,6 +3,7 @@ package rs.projekat.enrg.energymeters;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -16,12 +17,13 @@ import rs.projekat.enrg.energymeters.network.PullWebContent;
 import rs.projekat.enrg.energymeters.network.VolleySingleton;
 import rs.projekat.enrg.energymeters.network.WebRequestCallbackInterface;
 
-public class GlavnaAktivnost extends AppCompatActivity {
+public class GlavnaAktivnost extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private VolleySingleton mVolleySingleton;
     private ProgressDialogCustom progressDialogCustom; // ovde smo deklarisali objekat. Trebace nam jedan objekat tog tipa,,,,
     private ListView lvSenzor;  // koristicemo ListView, tu cemo cuvati referncu u toj promenljivoj
     private SensorListAdapter adapterZaSenzorListu;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +31,10 @@ public class GlavnaAktivnost extends AppCompatActivity {
         setContentView(R.layout.activity_glavna_aktivnost);
 
         Button btn1 = (Button) findViewById(R.id.button1);
-        final TextView tv1 = (TextView) findViewById(R.id.tv1);
+        // final TextView tv1 = (TextView) findViewById(R.id.tv1);
         lvSenzor = (ListView) findViewById(R.id.lv_senzori); // uzimamo referencu za konkretan id iz aktivitija
+
+        lvSenzor.setOnItemClickListener(this); // sve klikove prosledjuje na THIS
 
         progressDialogCustom = new ProgressDialogCustom(this);  // ovde smo ga napravili. I definisali smo my gazdu THIS
 
@@ -63,8 +67,8 @@ public class GlavnaAktivnost extends AppCompatActivity {
                     Toast.makeText(GlavnaAktivnost.this, "Sve je ok " + listaSenzora.getTag(), Toast.LENGTH_LONG).show();
 
                     adapterZaSenzorListu = new SensorListAdapter(GlavnaAktivnost.this,listaSenzora.getData());
-
                     lvSenzor.setAdapter(adapterZaSenzorListu);
+
 
 
                 } else {
@@ -80,7 +84,7 @@ public class GlavnaAktivnost extends AppCompatActivity {
 
                 progressDialogCustom.hideDialog();
                 Toast.makeText(GlavnaAktivnost.this, "Nešto je prslo", Toast.LENGTH_LONG).show();
-                tv1.setText(error);
+                //tv1.setText(error);
             }
         });
 
@@ -88,16 +92,24 @@ public class GlavnaAktivnost extends AppCompatActivity {
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tv1.setText("Nesto Upisi");
+                // tv1.setText("Nesto Upisi");
                 // Sada iniciramo povlacenje
                 progressDialogCustom.showDialog("Uvlacenje Podataka");
                 webcontent.pullList();
-
             }
         });
+
+
+
 
 
     }
 
 
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int pozicija, long l) {
+
+        Toast.makeText(GlavnaAktivnost.this, "Trenutna pozicija "+pozicija, Toast.LENGTH_LONG).show();
+
+    }
 }

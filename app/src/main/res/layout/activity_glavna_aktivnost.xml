@@ -16,29 +16,14 @@
         android:text="@string/dugme1"
         android:id="@+id/button1"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="55dp"
+        android:layout_marginLeft="0dp"
         android:layout_marginTop="15dp" />
-
-
-    <TextView
-        android:id="@+id/tv1"
-        android:layout_below="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Djesi" />
-
-    <TextView
-        android:id="@+id/tv2"
-        android:layout_below="@+id/tv1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ispod" />
 
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tv2"
+        android:layout_below="@id/button1"
         android:layout_marginTop="10dp"
         android:id="@+id/lv_senzori"
         />
