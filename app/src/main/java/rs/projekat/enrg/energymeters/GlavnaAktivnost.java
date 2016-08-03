@@ -4,9 +4,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import rs.projekat.enrg.energymeters.adapters.SensorListAdapter;
 import rs.projekat.enrg.energymeters.common.EndPoints;
 import rs.projekat.enrg.energymeters.dialogs.ProgressDialogCustom;
 import rs.projekat.enrg.energymeters.model.ListaSenzora;
@@ -18,6 +20,8 @@ public class GlavnaAktivnost extends AppCompatActivity {
 
     private VolleySingleton mVolleySingleton;
     private ProgressDialogCustom progressDialogCustom; // ovde smo deklarisali objekat. Trebace nam jedan objekat tog tipa,,,,
+    private ListView lvSenzor;  // koristicemo ListView, tu cemo cuvati referncu u toj promenljivoj
+    private SensorListAdapter adapterZaSenzorListu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,7 @@ public class GlavnaAktivnost extends AppCompatActivity {
 
         Button btn1 = (Button) findViewById(R.id.button1);
         final TextView tv1 = (TextView) findViewById(R.id.tv1);
+        lvSenzor = (ListView) findViewById(R.id.lv_senzori); // uzimamo referencu za konkretan id iz aktivitija
 
         progressDialogCustom = new ProgressDialogCustom(this);  // ovde smo ga napravili. I definisali smo my gazdu THIS
 
@@ -56,6 +61,11 @@ public class GlavnaAktivnost extends AppCompatActivity {
                 if (success) {
                     // ako ima podataka
                     Toast.makeText(GlavnaAktivnost.this, "Sve je ok " + listaSenzora.getTag(), Toast.LENGTH_LONG).show();
+
+                    adapterZaSenzorListu = new SensorListAdapter(GlavnaAktivnost.this,listaSenzora.getData());
+
+                    lvSenzor.setAdapter(adapterZaSenzorListu);
+
 
                 } else {
                     // ako nema nista
