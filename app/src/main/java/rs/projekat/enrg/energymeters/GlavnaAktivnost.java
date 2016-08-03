@@ -73,7 +73,7 @@ public class GlavnaAktivnost extends AppCompatActivity implements AdapterView.On
 
                 } else {
                     // ako nema nista
-                    Toast.makeText(GlavnaAktivnost.this, "Nema podataka u JSON", Toast.LENGTH_LONG).show();
+                    Toast.makeText(GlavnaAktivnost.this, "Nema podataka u JSON", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -98,11 +98,6 @@ public class GlavnaAktivnost extends AppCompatActivity implements AdapterView.On
                 webcontent.pullList();
             }
         });
-
-
-
-
-
     }
 
 
