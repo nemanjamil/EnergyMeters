@@ -18,6 +18,8 @@ public class Grafici extends AppCompatActivity implements View.OnClickListener {
         TextView tv1 = (TextView) findViewById(R.id.textView1);
         Button bt1 = (Button) findViewById(R.id.button1);
 
+        // 989898 jhjhjh
+
         Intent intent = getIntent();
         Integer pozicija = intent.getIntExtra("pozicijaMoja", -1);
         String idSenzora = intent.getStringExtra("idSenzora");
@@ -26,6 +28,7 @@ public class Grafici extends AppCompatActivity implements View.OnClickListener {
         tv1.setTextSize(40);
         tv1.setText(pozicija.toString()+" idSenzora: "+idSenzora+" ipSenzora: "+ipSenzora);
         bt1.setOnClickListener(this);
+        // comment
 
     }
 

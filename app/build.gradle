@@ -25,6 +25,6 @@ dependencies {
     // Volley - ovo je biblioteka za rad sa HTTP requestom
     compile 'me.neavo:volley:2014.12.09'
     compile 'com.android.support:appcompat-v7:24.1.1'
-    // for Gson
+    // for Gson dsds
     compile 'com.google.code.gson:gson:2.7'
 }
