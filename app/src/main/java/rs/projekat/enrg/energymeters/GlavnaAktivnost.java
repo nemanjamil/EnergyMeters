@@ -67,7 +67,7 @@ public class GlavnaAktivnost extends AppCompatActivity implements AdapterView.On
 
                 if (success) {
                     // ako ima podataka
-                    Toast.makeText(GlavnaAktivnost.this, "Sve je ok " + listaSenzora.getTag(), Toast.LENGTH_LONG).show();
+                   // Toast.makeText(GlavnaAktivnost.this, "Sve je ok " + listaSenzora.getTag(), Toast.LENGTH_LONG).show();
 
                     adapterZaSenzorListu = new SensorListAdapter(GlavnaAktivnost.this,listaSenzora.getData());
                     lvSenzor.setAdapter(adapterZaSenzorListu);
@@ -107,7 +107,7 @@ public class GlavnaAktivnost extends AppCompatActivity implements AdapterView.On
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int pozicija, long l) {
 
-        Toast.makeText(GlavnaAktivnost.this, "Trenutna pozicija "+pozicija, Toast.LENGTH_LONG).show();
+        // Toast.makeText(GlavnaAktivnost.this, "Trenutna pozicija "+pozicija, Toast.LENGTH_LONG).show();
 
         // sada pravimo intent za pozivanje drugog aktivitija i saljemo podatke
         Intent intent = new Intent(this, Grafici.class); // this nas aktiviti zove Grafici.class

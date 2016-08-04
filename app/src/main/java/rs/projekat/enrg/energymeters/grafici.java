@@ -88,7 +88,8 @@ public class Grafici extends AppCompatActivity implements View.OnClickListener, 
 
                if (success) {
                     // ako ima podataka
-                    Toast.makeText(Grafici.this, "Podaci o senzoru " + graficiTip.getTag(), Toast.LENGTH_LONG).show();
+                    // Toast.makeText(Grafici.this, "Podaci o senzoru " + graficiTip.getTag(), Toast.LENGTH_LONG).show();
+                   tv1.setText(graficiTip.getTag());
 
 
                 } else {
