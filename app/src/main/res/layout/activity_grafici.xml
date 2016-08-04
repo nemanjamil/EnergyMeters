@@ -9,4 +9,23 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".Grafici">
 
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Podaci koje smo uvukli"
+        android:id="@+id/textView1"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:inputType="textMultiLine"
+        android:layout_alignParentLeft="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vrati se na Listu"
+        android:id="@+id/button1"
+        android:layout_below="@+id/textView1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="59dp" />
 </RelativeLayout>

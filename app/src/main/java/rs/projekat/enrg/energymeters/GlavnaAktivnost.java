@@ -1,5 +1,6 @@
 package rs.projekat.enrg.energymeters;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -23,6 +24,8 @@ public class GlavnaAktivnost extends AppCompatActivity implements AdapterView.On
     private ProgressDialogCustom progressDialogCustom; // ovde smo deklarisali objekat. Trebace nam jedan objekat tog tipa,,,,
     private ListView lvSenzor;  // koristicemo ListView, tu cemo cuvati referncu u toj promenljivoj
     private SensorListAdapter adapterZaSenzorListu;
+
+    private ListaSenzora listaSenzoraMoja; // Globalne promeljive
 
 
     @Override
@@ -69,7 +72,7 @@ public class GlavnaAktivnost extends AppCompatActivity implements AdapterView.On
                     adapterZaSenzorListu = new SensorListAdapter(GlavnaAktivnost.this,listaSenzora.getData());
                     lvSenzor.setAdapter(adapterZaSenzorListu);
 
-
+                    listaSenzoraMoja = listaSenzora; // smesta podatke koje smo dobili u globalnu promeljivu
 
                 } else {
                     // ako nema nista
@@ -105,6 +108,13 @@ public class GlavnaAktivnost extends AppCompatActivity implements AdapterView.On
     public void onItemClick(AdapterView<?> adapterView, View view, int pozicija, long l) {
 
         Toast.makeText(GlavnaAktivnost.this, "Trenutna pozicija "+pozicija, Toast.LENGTH_LONG).show();
+
+        // sada pravimo intent za pozivanje drugog aktivitija i saljemo podatke
+        Intent intent = new Intent(this, Grafici.class); // this nas aktiviti zove Grafici.class
+        intent.putExtra("pozicijaMoja",pozicija);
+        intent.putExtra("idSenzora",listaSenzoraMoja.getData().get(pozicija).getIdSmetersId());
+        intent.putExtra("ipSenzora",listaSenzoraMoja.getData().get(pozicija).getIpAddress());
+        startActivity(intent);
 
     }
 }
