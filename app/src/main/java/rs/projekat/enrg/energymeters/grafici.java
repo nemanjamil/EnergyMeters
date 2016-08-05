@@ -29,15 +29,18 @@ import com.github.mikephil.charting.formatter.AxisValueFormatter;
 import com.github.mikephil.charting.formatter.FormattedStringCache;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import rs.projekat.enrg.energymeters.adapters.SensorListAdapter;
 import rs.projekat.enrg.energymeters.common.EndPoints;
 import rs.projekat.enrg.energymeters.dialogs.ProgressDialogCustom;
 import rs.projekat.enrg.energymeters.model.GraphicsIp;
 import rs.projekat.enrg.energymeters.model.ListaSenzora;
+import rs.projekat.enrg.energymeters.model.PodaciGrafik;
 import rs.projekat.enrg.energymeters.network.PullWebContent;
 import rs.projekat.enrg.energymeters.network.VolleySingleton;
 import rs.projekat.enrg.energymeters.network.WebRequestCallbackInterface;
@@ -51,6 +54,8 @@ public class Grafici extends AppCompatActivity implements View.OnClickListener, 
     protected Typeface mTfLight;
     private ProgressDialogCustom _progressDialogCustom;
     private VolleySingleton _VolleySingleton;
+
+    private GraphicsIp graficiTipPolje; // definisali smo globalnu promenljivu
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +94,9 @@ public class Grafici extends AppCompatActivity implements View.OnClickListener, 
                if (success) {
                     // ako ima podataka
                     // Toast.makeText(Grafici.this, "Podaci o senzoru " + graficiTip.getTag(), Toast.LENGTH_LONG).show();
-                   tv1.setText(graficiTip.getTag());
+                   // tv1.setText(graficiTip.getTag());
+                   graficiTipPolje = graficiTip;
+                   setDataNas(graficiTipPolje.getData());
 
 
                 } else {
@@ -168,7 +175,7 @@ public class Grafici extends AppCompatActivity implements View.OnClickListener, 
         mChart.setViewPortOffsets(0f, 0f, 0f, 0f);
 
         // add data
-        setData(100, 30);
+        //setData(100, 30);
         mChart.invalidate();
 
         // get the legend (only possible after setting data)
@@ -215,6 +222,50 @@ public class Grafici extends AppCompatActivity implements View.OnClickListener, 
         YAxis rightAxis = mChart.getAxisRight();
         rightAxis.setEnabled(false);
 
+
+    }
+    private float napraviFloatodString(String vreme) {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        float doubleMili = 0;
+        try {
+           doubleMili = (float) (sdf.parse(vreme).getTime() / 1000.0);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return doubleMili;
+    }
+
+    private void setDataNas(List<PodaciGrafik> data) {
+
+        ArrayList<Entry> valuesArray = new ArrayList<Entry>(); // pravimo Array
+
+        for (PodaciGrafik item : data) {
+            valuesArray.add(new Entry(napraviFloatodString(item.getDateTimeFrom()),item.getConsumption().floatValue() )); // add one entry per hour
+        }
+
+
+        // create a dataset and give it a type
+        LineDataSet set1 = new LineDataSet(valuesArray, "DataSet 1");
+        set1.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set1.setColor(ColorTemplate.getHoloBlue());
+        set1.setValueTextColor(ColorTemplate.getHoloBlue());
+        set1.setLineWidth(1.5f);
+        set1.setDrawCircles(false);
+        set1.setDrawValues(false);
+        set1.setFillAlpha(65);
+        set1.setFillColor(ColorTemplate.getHoloBlue());
+        set1.setHighLightColor(Color.rgb(244, 117, 117));
+        set1.setDrawCircleHole(false);
+
+        // create a data object with the datasets
+        LineData dataPodaci = new LineData(set1);
+        dataPodaci.setValueTextColor(Color.WHITE);
+        dataPodaci.setValueTextSize(9f);
+
+        // set data
+        mChart.setData(dataPodaci);
 
     }
 
