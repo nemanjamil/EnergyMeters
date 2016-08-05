@@ -13,6 +13,7 @@ public class GraphicsIp {
     @SerializedName("tag")
     @Expose
     private String tag;
+
     @SerializedName("success")
     @Expose
     private Boolean success;
