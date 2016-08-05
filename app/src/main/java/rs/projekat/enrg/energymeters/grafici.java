@@ -291,7 +291,7 @@ public class Grafici extends AppCompatActivity implements View.OnClickListener, 
         return (float) (Math.random() * range) + startsfrom;
     }
 
-    private void setData(int count, float range) {
+/*    private void setData(int count, float range) {
 
         long now = System.currentTimeMillis();
         long hourMillis = 3600000L;
@@ -327,14 +327,14 @@ public class Grafici extends AppCompatActivity implements View.OnClickListener, 
 
         // set data
         mChart.setData(data);
-    }
+    }*/
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
         tvX.setText("" + (mSeekBarX.getProgress()));
 
-        setData(mSeekBarX.getProgress(), 50);
+        //setData(mSeekBarX.getProgress(), 50);
 
         // redraw
         mChart.invalidate();
