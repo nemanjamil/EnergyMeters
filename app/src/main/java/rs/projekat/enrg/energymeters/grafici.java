@@ -1,71 +1,62 @@
 package rs.projekat.enrg.energymeters;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Typeface;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.AxisValueFormatter;
-import com.github.mikephil.charting.formatter.FormattedStringCache;
-import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import rs.projekat.enrg.energymeters.adapters.SensorListAdapter;
+import rs.projekat.enrg.energymeters.common.Colors;
+import rs.projekat.enrg.energymeters.common.Constants;
 import rs.projekat.enrg.energymeters.common.EndPoints;
+import rs.projekat.enrg.energymeters.custom.MyAxisValueFormatter;
+import rs.projekat.enrg.energymeters.custom.MyMarkerView;
+import rs.projekat.enrg.energymeters.custom.MyValueFormatter;
 import rs.projekat.enrg.energymeters.dialogs.ProgressDialogCustom;
 import rs.projekat.enrg.energymeters.model.GraphicsIp;
-import rs.projekat.enrg.energymeters.model.ListaSenzora;
 import rs.projekat.enrg.energymeters.model.PodaciGrafik;
 import rs.projekat.enrg.energymeters.network.PullWebContent;
 import rs.projekat.enrg.energymeters.network.VolleySingleton;
 import rs.projekat.enrg.energymeters.network.WebRequestCallbackInterface;
 
-public class Grafici extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class Grafici extends AppCompatActivity implements View.OnClickListener {
 
-    private LineChart mChart;
-    private SeekBar mSeekBarX;
-    private TextView tvX;
     protected Typeface mTfRegular;
     protected Typeface mTfLight;
+    private BarChart mChart;
     private ProgressDialogCustom _progressDialogCustom;
     private VolleySingleton _VolleySingleton;
 
-    private GraphicsIp graficiTipPolje; // definisali smo globalnu promenljivu
+    private GraphicsIp _graphicsIp; // definisali smo globalnu promenljivu
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grafici);
 
+
+        // Get text view reference
         final TextView tv1 = (TextView) findViewById(R.id.textView1);
+        // Get button reference
         Button bt1 = (Button) findViewById(R.id.button1);
+        // Get BarChart reference
+        mChart = (BarChart) findViewById(R.id.chart1);
 
-
+        // Pull the data from intent
         Intent intent = getIntent();
         Integer pozicija = intent.getIntExtra("pozicijaMoja", -1);
         String idSenzora = intent.getStringExtra("idSenzora");
@@ -73,31 +64,40 @@ public class Grafici extends AppCompatActivity implements View.OnClickListener, 
 
         tv1.setTextSize(40);
         //tv1.setText(pozicija.toString() + " idSenzora: " + idSenzora + " ipSenzora: " + ipSenzora);
-        bt1.setOnClickListener(this);  // to nam ide na onClick Call Back Metod
 
-        /*
-        * Prikupljanje podataka sa neta*/
+        // This activity implements bt1 OnClick event
+        bt1.setOnClickListener(this);
+
+        // Show progress dialog as we are going to pull the data from the server
         _progressDialogCustom = new ProgressDialogCustom(this); // da pre ucitavanja pokrene dialog
         _progressDialogCustom.showDialog("Ucitavam Podatke");
 
+        // Get volley instance. Volley manages http requests
         _VolleySingleton = VolleySingleton.getsInstance(this);
-        String urlSaParametrima = String.format(EndPoints.URLPODACIPOSENZORU,idSenzora,ipSenzora);
 
+        // Create URL
+        String urlSaParametrima = String.format(EndPoints.URLPODACIPOSENZORU, idSenzora, ipSenzora);
+
+        // Create Object to pull the data from the server, and fill data model with the data
         final PullWebContent<GraphicsIp> webcontent = new PullWebContent<GraphicsIp>(GraphicsIp.class, urlSaParametrima, _VolleySingleton);
 
-        webcontent.setCallbackListener(new WebRequestCallbackInterface<GraphicsIp>(){
+        webcontent.setCallbackListener(new WebRequestCallbackInterface<GraphicsIp>() {
 
             @Override
             public void webRequestSuccess(boolean success, GraphicsIp graficiTip) {
+                // Web request finished
+                // Hide the progress dialog
                 _progressDialogCustom.hideDialog();
 
-               if (success) {
-                    // ako ima podataka
-                    // Toast.makeText(Grafici.this, "Podaci o senzoru " + graficiTip.getTag(), Toast.LENGTH_LONG).show();
-                   // tv1.setText(graficiTip.getTag());
-                   graficiTipPolje = graficiTip;
-                   setDataNas(graficiTipPolje.getData());
+                if (success) {
+                    // The request was successful
+                    // show the newest data
+                    int data_size = graficiTip.getData().size();
 
+                    // Set BarChart data
+                    setData(graficiTip.getData(), data_size - Constants.WINDOW_SIZE, data_size);
+                    setupLabels(graficiTip);
+                    setupMarker(graficiTip);
 
                 } else {
                     // ako nema nista
@@ -114,160 +114,74 @@ public class Grafici extends AppCompatActivity implements View.OnClickListener, 
 
         webcontent.pullList();
 
-        /* NEMANJA TESTIRANJE */
-       /* String url = "http://direktnoizbaste.rs/parametri.php?action=lab011Out&IdSmetersIdchar=4ed77bc2ec2a240ae53f8fe4fc74551a90255759b7538287640fbac2b3752b60";
-        // Request a string response
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                // Result handling
-                //System.out.println(response.substring(0, 100));
-                tv1.setText(response);
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-                // Error handling
-                System.out.println("Something went wrong!");
-                error.printStackTrace();
-
-            }
-        });
-        Volley.newRequestQueue(this).add(stringRequest);*/
-        /*KRAJ NEMANJA TESTIRANJE*/
-
-
-
-
-        // odavde mi ide GRAFIKA
+        //
         mTfRegular = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
         mTfLight = Typeface.createFromAsset(getAssets(), "OpenSans-Light.ttf");
 
-        tvX = (TextView) findViewById(R.id.tvXMax);
-        mSeekBarX = (SeekBar) findViewById(R.id.seekBar1);
-        mSeekBarX.setProgress(100);
-        tvX.setText("100");
-
-        mSeekBarX.setOnSeekBarChangeListener(this);
-
-        mChart = (LineChart) findViewById(R.id.chart1);
-
+        mChart = (BarChart) findViewById(R.id.chart1);
         // no description text
         mChart.setDescription("");
-        mChart.setNoDataTextDescription("You need to provide data for the chart.");
+        mChart.setNoDataText(getString(R.string.chart_no_data_text));
+        mChart.setNoDataTextDescription(getString(R.string.chart_no_data_text_desc));
 
+    }
+
+    // Sets the mChart data
+    private void setData(List<PodaciGrafik> data, Integer from, Integer to) {
+
+        // Prepare data
+        ArrayList<BarEntry> valueSet = new ArrayList<>();
+        List<Integer> colors = new ArrayList<>();
+        Toast.makeText(Grafici.this, String.valueOf(data.size()), Toast.LENGTH_SHORT).show();
+        //if (from < 0) from = 0;
+        for (int i = 0; i < data.size(); i++) {
+            // Create Bar entry
+            BarEntry be = new BarEntry(i, data.get(i).getConsumption().floatValue());
+            // Add Bar entry to data set
+            valueSet.add(be);
+
+            if (data.get(i).getTypeChar().equals(Constants.NORMAL)) {
+                colors.add(Colors.COLOR_NORMAL);
+            } else
+                colors.add(Colors.COLOR_RESTORE);
+        }
+
+        BarDataSet dataSet = new BarDataSet(valueSet, " ");
+
+
+        dataSet.setColors(colors);
+        BarData barData = new BarData(dataSet);
+        // A single bar is wide 80% of max bar width
+        barData.setBarWidth(0.80f);
+        barData.setValueTextSize(9f);
+
+        barData.setValueFormatter(new MyValueFormatter());
+
+        mChart.setData(barData);
+
+        // limit the number of visible entries
+        mChart.setVisibleXRangeMaximum(9);
+        // move to the latest entry
+        mChart.moveViewToX(data.size());
+
+        mChart.setDescription(getString(R.string.chart_description));
+        mChart.animateXY(2000, 2000);
         // enable touch gestures
         mChart.setTouchEnabled(true);
-
-        mChart.setDragDecelerationFrictionCoef(0.9f);
 
         // enable scaling and dragging
         mChart.setDragEnabled(true);
         mChart.setScaleEnabled(true);
         mChart.setDrawGridBackground(false);
-        mChart.setHighlightPerDragEnabled(true);
 
-        // set an alternative background color
-        mChart.setBackgroundColor(Color.WHITE);
-        mChart.setViewPortOffsets(0f, 0f, 0f, 0f);
+        // if disabled, scaling can be done on x- and y-axis separately
+        mChart.setPinchZoom(true);
+        mChart.setDragDecelerationFrictionCoef(0.9f);
 
-        // add data
-        //setData(100, 30);
+        //mChart.setViewPortOffsets(50f,10f,10f,50f);
         mChart.invalidate();
-
-        // get the legend (only possible after setting data)
-        Legend l = mChart.getLegend();
-        l.setEnabled(false);
-
-        XAxis xAxis = mChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.TOP_INSIDE);
-        xAxis.setTypeface(mTfLight);
-        xAxis.setTextSize(10f);
-        xAxis.setTextColor(Color.WHITE);
-        xAxis.setDrawAxisLine(false);
-        xAxis.setDrawGridLines(true);
-        xAxis.setTextColor(Color.rgb(255, 192, 56));
-        xAxis.setCenterAxisLabels(true);
-        xAxis.setGranularity(60000L); // one minute in millis
-        xAxis.setValueFormatter(new AxisValueFormatter() {
-
-            private FormattedStringCache.Generic<Long, Date> mFormattedStringCache = new FormattedStringCache.Generic<>(new SimpleDateFormat("dd MMM HH:mm"));
-
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                Long v = (long) value;
-                return mFormattedStringCache.getFormattedValue(new Date(v), v);
-            }
-
-            @Override
-            public int getDecimalDigits() {
-                return 0;
-            }
-        });
-
-        YAxis leftAxis = mChart.getAxisLeft();
-        leftAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
-        leftAxis.setTypeface(mTfLight);
-        leftAxis.setTextColor(ColorTemplate.getHoloBlue());
-        leftAxis.setDrawGridLines(true);
-        leftAxis.setGranularityEnabled(true);
-        leftAxis.setAxisMinValue(0f);
-        leftAxis.setAxisMaxValue(170f);
-        leftAxis.setYOffset(-9f);
-        leftAxis.setTextColor(Color.rgb(255, 192, 56));
-
-        YAxis rightAxis = mChart.getAxisRight();
-        rightAxis.setEnabled(false);
-
-
-    }
-    private float napraviFloatodString(String vreme) {
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        float doubleMili = 0;
-        try {
-           doubleMili = (float) (sdf.parse(vreme).getTime() / 1000.0);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return doubleMili;
     }
 
-    private void setDataNas(List<PodaciGrafik> data) {
-
-        ArrayList<Entry> valuesArray = new ArrayList<Entry>(); // pravimo Array
-
-        for (PodaciGrafik item : data) {
-            valuesArray.add(new Entry(napraviFloatodString(item.getDateTimeFrom()),item.getConsumption().floatValue() )); // add one entry per hour
-        }
-
-
-        // create a dataset and give it a type
-        LineDataSet set1 = new LineDataSet(valuesArray, "DataSet 1");
-        set1.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set1.setColor(ColorTemplate.getHoloBlue());
-        set1.setValueTextColor(ColorTemplate.getHoloBlue());
-        set1.setLineWidth(1.5f);
-        set1.setDrawCircles(false);
-        set1.setDrawValues(false);
-        set1.setFillAlpha(65);
-        set1.setFillColor(ColorTemplate.getHoloBlue());
-        set1.setHighLightColor(Color.rgb(244, 117, 117));
-        set1.setDrawCircleHole(false);
-
-        // create a data object with the datasets
-        LineData dataPodaci = new LineData(set1);
-        dataPodaci.setValueTextColor(Color.WHITE);
-        dataPodaci.setValueTextSize(9f);
-
-        // set data
-        mChart.setData(dataPodaci);
-
-    }
 
     @Override
     public void onClick(View view) {
@@ -277,68 +191,50 @@ public class Grafici extends AppCompatActivity implements View.OnClickListener, 
         }
     }
 
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
+    private void setupLabels(GraphicsIp graficiTip) {
+        // Setup chart
+        XAxis xAxis = mChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
+        xAxis.setDrawGridLines(false);
+        xAxis.setAxisMinValue(-0.5f); // TODO chage this values dynamically
+        xAxis.setAxisMaxValue(8.5f);// TODO chage this values dynamically
+        xAxis.setGranularity(1f);
+        xAxis.setLabelRotationAngle(270);
 
+        // TODO remove labels from x Axis
+        xAxis.setValueFormatter(new MyAxisValueFormatter(graficiTip));
+
+        YAxis leftAxis = mChart.getAxisLeft();
+        leftAxis.setAxisMinValue(-0.5f);
+        leftAxis.setAxisMaxValue(10f);
+
+        YAxis rightAxis = mChart.getAxisRight();
+        rightAxis.setAxisMinValue(-0.5f);
+        rightAxis.setAxisMaxValue(10f);
+
+        Legend l = mChart.getLegend();
+        l.setPosition(Legend.LegendPosition.ABOVE_CHART_LEFT);
+        l.setXEntrySpace(40f);
+        l.setYEntrySpace(0f);
+        l.setYOffset(0f);
+        List<Integer> legendColors = new ArrayList<>();
+        legendColors.add(Colors.COLOR_NORMAL);
+        legendColors.add(Colors.COLOR_RESTORE);
+        l.setComputedColors(legendColors);
+
+        List<String> legendLabels = new ArrayList<>();
+        legendLabels.add(getString(R.string.normal));
+        legendLabels.add(getString(R.string.restore));
+        l.setComputedLabels(legendLabels);
     }
 
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-
+    private void setupMarker(GraphicsIp graficiTip) {
+        // Setup marker
+        MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view, graficiTip);
+        // set the marker to the chart
+        mChart.setMarkerView(mv);
+        // enable touch gestures
+        // mChart.setTouchEnabled(true);
+        mChart.setDrawMarkerViews(true);
     }
-
-    protected float getRandom(float range, float startsfrom) {
-        return (float) (Math.random() * range) + startsfrom;
-    }
-
-/*    private void setData(int count, float range) {
-
-        long now = System.currentTimeMillis();
-        long hourMillis = 3600000L;
-
-        ArrayList<Entry> values = new ArrayList<Entry>();
-
-        float from = now - (count / 2) * hourMillis;
-        float to = now + (count / 2) * hourMillis;
-
-        for (float x = from; x < to; x += hourMillis) {
-
-            float y = getRandom(range, 50);
-            values.add(new Entry(x, y)); // add one entry per hour
-        }
-
-        // create a dataset and give it a type
-        LineDataSet set1 = new LineDataSet(values, "DataSet 1");
-        set1.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set1.setColor(ColorTemplate.getHoloBlue());
-        set1.setValueTextColor(ColorTemplate.getHoloBlue());
-        set1.setLineWidth(1.5f);
-        set1.setDrawCircles(false);
-        set1.setDrawValues(false);
-        set1.setFillAlpha(65);
-        set1.setFillColor(ColorTemplate.getHoloBlue());
-        set1.setHighLightColor(Color.rgb(244, 117, 117));
-        set1.setDrawCircleHole(false);
-
-        // create a data object with the datasets
-        LineData data = new LineData(set1);
-        data.setValueTextColor(Color.WHITE);
-        data.setValueTextSize(9f);
-
-        // set data
-        mChart.setData(data);
-    }*/
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-        tvX.setText("" + (mSeekBarX.getProgress()));
-
-        //setData(mSeekBarX.getProgress(), 50);
-
-        // redraw
-        mChart.invalidate();
-    }
-
-
 }
