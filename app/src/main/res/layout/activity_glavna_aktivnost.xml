@@ -9,25 +9,10 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="rs.projekat.enrg.energymeters.GlavnaAktivnost">
 
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/dugme1"
-        android:id="@+id/button1"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="0dp"
-        android:layout_marginTop="15dp" />
-
-
     <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/button1"
-        android:layout_marginTop="10dp"
         android:id="@+id/lv_senzori"
-        />
-
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 
 </RelativeLayout>

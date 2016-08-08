@@ -33,7 +33,6 @@ public class GlavnaAktivnost extends AppCompatActivity implements AdapterView.On
         super.onCreate(savedInstanceState); // ne dirati
         setContentView(R.layout.activity_glavna_aktivnost);
 
-        Button btn1 = (Button) findViewById(R.id.button1);
         // final TextView tv1 = (TextView) findViewById(R.id.tv1);
         lvSenzor = (ListView) findViewById(R.id.lv_senzori); // uzimamo referencu za konkretan id iz aktivitija
 
@@ -91,16 +90,8 @@ public class GlavnaAktivnost extends AppCompatActivity implements AdapterView.On
             }
         });
 
-
-        btn1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // tv1.setText("Nesto Upisi");
-                // Sada iniciramo povlacenje
-                progressDialogCustom.showDialog("Uvlacenje Podataka");
-                webcontent.pullList();
-            }
-        });
+        progressDialogCustom.showDialog("Učitavam listu senzora...");
+        webcontent.pullList();
     }
 
 

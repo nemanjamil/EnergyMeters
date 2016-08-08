@@ -4,8 +4,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Button;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +15,7 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ import rs.projekat.enrg.energymeters.network.PullWebContent;
 import rs.projekat.enrg.energymeters.network.VolleySingleton;
 import rs.projekat.enrg.energymeters.network.WebRequestCallbackInterface;
 
-public class Grafici extends AppCompatActivity implements View.OnClickListener {
+public class Grafici extends AppCompatActivity {
 
     protected Typeface mTfRegular;
     protected Typeface mTfLight;
@@ -48,11 +48,10 @@ public class Grafici extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grafici);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Get text view reference
         final TextView tv1 = (TextView) findViewById(R.id.textView1);
-        // Get button reference
-        Button bt1 = (Button) findViewById(R.id.button1);
         // Get BarChart reference
         mChart = (BarChart) findViewById(R.id.chart1);
 
@@ -62,11 +61,9 @@ public class Grafici extends AppCompatActivity implements View.OnClickListener {
         String idSenzora = intent.getStringExtra("idSenzora");
         String ipSenzora = intent.getStringExtra("ipSenzora");
 
-        tv1.setTextSize(40);
+        tv1.setTextSize(36);
+        tv1.setText(ipSenzora);
         //tv1.setText(pozicija.toString() + " idSenzora: " + idSenzora + " ipSenzora: " + ipSenzora);
-
-        // This activity implements bt1 OnClick event
-        bt1.setOnClickListener(this);
 
         // Show progress dialog as we are going to pull the data from the server
         _progressDialogCustom = new ProgressDialogCustom(this); // da pre ucitavanja pokrene dialog
@@ -132,8 +129,6 @@ public class Grafici extends AppCompatActivity implements View.OnClickListener {
         // Prepare data
         ArrayList<BarEntry> valueSet = new ArrayList<>();
         List<Integer> colors = new ArrayList<>();
-        Toast.makeText(Grafici.this, String.valueOf(data.size()), Toast.LENGTH_SHORT).show();
-        //if (from < 0) from = 0;
         for (int i = 0; i < data.size(); i++) {
             // Create Bar entry
             BarEntry be = new BarEntry(i, data.get(i).getConsumption().floatValue());
@@ -165,7 +160,11 @@ public class Grafici extends AppCompatActivity implements View.OnClickListener {
         mChart.moveViewToX(data.size());
 
         mChart.setDescription(getString(R.string.chart_description));
-        mChart.animateXY(2000, 2000);
+        int descr_width = Utils.calcTextWidth(mChart.getPaint(BarChart.PAINT_DESCRIPTION), getString(R.string.chart_description));
+        mChart.setDescriptionPosition(mChart.getWidth()/2f + descr_width/2, mChart.getHeight()*0.1f);
+
+
+        mChart.animateXY(500, 2000);
         // enable touch gestures
         mChart.setTouchEnabled(true);
 
@@ -182,35 +181,40 @@ public class Grafici extends AppCompatActivity implements View.OnClickListener {
         mChart.invalidate();
     }
 
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.button1:
-                finish();
-        }
-    }
-
     private void setupLabels(GraphicsIp graficiTip) {
         // Setup chart
         XAxis xAxis = mChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
-        xAxis.setAxisMinValue(-0.5f); // TODO chage this values dynamically
-        xAxis.setAxisMaxValue(8.5f);// TODO chage this values dynamically
+        float max_index = graficiTip.getData().size();
+        xAxis.setAxisMinValue(-0.5f);
+        xAxis.setAxisMaxValue(max_index - 0.5f);
         xAxis.setGranularity(1f);
         xAxis.setLabelRotationAngle(270);
 
         // TODO remove labels from x Axis
         xAxis.setValueFormatter(new MyAxisValueFormatter(graficiTip));
 
+        // Determine maximum value for Y axis
+        float max_y = 0.0f;
+        for (int i = 0; i < graficiTip.getData().size(); i++) {
+            if (max_y < graficiTip.getData().get(i).getConsumption().floatValue())
+                max_y = graficiTip.getData().get(i).getConsumption().floatValue();
+        }
+
+//        float ceil = (float) Math.ceil(max_y);
+//        if (max_y < ceil - 0.5f)
+//            max_y = ceil;
+//        else
+//            max_y = ceil - 0.5f;
+
         YAxis leftAxis = mChart.getAxisLeft();
-        leftAxis.setAxisMinValue(-0.5f);
-        leftAxis.setAxisMaxValue(10f);
+        leftAxis.setAxisMinValue(0.0f);
+        leftAxis.setAxisMaxValue(1.4f * max_y);
 
         YAxis rightAxis = mChart.getAxisRight();
-        rightAxis.setAxisMinValue(-0.5f);
-        rightAxis.setAxisMaxValue(10f);
+        rightAxis.setAxisMinValue(0.0f);
+        rightAxis.setAxisMaxValue(1.4f * max_y);
 
         Legend l = mChart.getLegend();
         l.setPosition(Legend.LegendPosition.ABOVE_CHART_LEFT);
@@ -236,5 +240,17 @@ public class Grafici extends AppCompatActivity implements View.OnClickListener {
         // enable touch gestures
         // mChart.setTouchEnabled(true);
         mChart.setDrawMarkerViews(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                finish();
+                return true;
+            }
+
+        }
+        return true;
     }
 }
