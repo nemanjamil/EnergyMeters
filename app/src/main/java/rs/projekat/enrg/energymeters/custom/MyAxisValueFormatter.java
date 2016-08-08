@@ -58,7 +58,9 @@ public class MyAxisValueFormatter implements AxisValueFormatter {
     public String getFormattedValue(float value, AxisBase axis) {
         // Prepare xAxis values
         //return labels.get((int) value);
-        String s = "";
+        int index = ((int) value);
+        int novaVar = graficiTip.getData().get(index).getMeasurementId();
+        String s = String.valueOf(novaVar);
         // TODO do we need xAxis labels at all
 //            if ((int)value - 1 <  graficiTip.getData().size())
 //                s = graficiTip.getData().get((int)value - 1).getTypeChar();
