@@ -49,6 +49,7 @@ public class Grafici extends AppCompatActivity {
         setContentView(R.layout.activity_grafici);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.action_bar_title_short);
 
         // Get text view reference
         final TextView tv1 = (TextView) findViewById(R.id.textView1);

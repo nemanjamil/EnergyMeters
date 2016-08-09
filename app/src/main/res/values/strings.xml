@@ -4,7 +4,9 @@
     <string name="ovoUpisi">DLalalalo</string>
     <string name="normal">Normal</string>
     <string name="restore">Restore</string>
-    <string name="chart_description">Energy consumption</string>
+    <string name="chart_description">Power consumption (<b>kW</b>)</string>
     <string name="chart_no_data_text">Nema podataka za prikaz.</string>
     <string name="chart_no_data_text_desc">Čekam podatke.</string>
+    <string name="action_bar_title">Smart Energy Meter by 012LAB</string>
+    <string name="action_bar_title_short">Smart EM by 012LAB</string>
 </resources>

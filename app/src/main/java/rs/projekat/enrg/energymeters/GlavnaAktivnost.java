@@ -33,6 +33,8 @@ public class GlavnaAktivnost extends AppCompatActivity implements AdapterView.On
         super.onCreate(savedInstanceState); // ne dirati
         setContentView(R.layout.activity_glavna_aktivnost);
 
+        getSupportActionBar().setTitle(R.string.action_bar_title);
+
         // final TextView tv1 = (TextView) findViewById(R.id.tv1);
         lvSenzor = (ListView) findViewById(R.id.lv_senzori); // uzimamo referencu za konkretan id iz aktivitija
 
