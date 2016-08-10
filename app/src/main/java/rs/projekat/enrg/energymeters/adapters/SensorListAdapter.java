@@ -36,6 +36,8 @@ public class SensorListAdapter extends ArrayAdapter<Senzor> {
         TextView tv2 = (TextView) rowView.findViewById(R.id.tv_li2);
 
         tv1.setText(senzori.get(position).getIdSmetersId());
+
+        // Show IP address of the last item in the list
         tv2.setText(senzori.get(position).getIpAddress());
 
         return  rowView;

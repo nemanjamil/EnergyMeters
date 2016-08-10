@@ -60,15 +60,17 @@ public class Grafici extends AppCompatActivity {
         Intent intent = getIntent();
         Integer pozicija = intent.getIntExtra("pozicijaMoja", -1);
         String idSenzora = intent.getStringExtra("idSenzora");
+        // TODO this one not used, delete it
         String ipSenzora = intent.getStringExtra("ipSenzora");
 
         tv1.setTextSize(36);
-        tv1.setText(ipSenzora);
+
+        //tv1.setText(ipSenzora);
         //tv1.setText(pozicija.toString() + " idSenzora: " + idSenzora + " ipSenzora: " + ipSenzora);
 
         // Show progress dialog as we are going to pull the data from the server
         _progressDialogCustom = new ProgressDialogCustom(this); // da pre ucitavanja pokrene dialog
-        _progressDialogCustom.showDialog("Ucitavam Podatke");
+        _progressDialogCustom.showDialog("Učitavam Podatke");
 
         // Get volley instance. Volley manages http requests
         _VolleySingleton = VolleySingleton.getsInstance(this);
@@ -91,6 +93,9 @@ public class Grafici extends AppCompatActivity {
                     // The request was successful
                     // show the newest data
                     int data_size = graficiTip.getData().size();
+
+                    // Show the IP address of the newest measurement in the barchart
+                    tv1.setText(graficiTip.getData().get(data_size-1).getIpAddress());
 
                     // Set BarChart data
                     setData(graficiTip.getData(), data_size - Constants.WINDOW_SIZE, data_size);

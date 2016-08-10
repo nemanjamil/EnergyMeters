@@ -87,7 +87,7 @@ public class GlavnaAktivnost extends AppCompatActivity implements AdapterView.On
             public void webRequestError(String error) {
 
                 progressDialogCustom.hideDialog();
-                Toast.makeText(GlavnaAktivnost.this, "Nešto je prslo", Toast.LENGTH_LONG).show();
+                Toast.makeText(GlavnaAktivnost.this, "Proverite internet konekciju...", Toast.LENGTH_LONG).show();
                 //tv1.setText(error);
             }
         });
@@ -106,6 +106,7 @@ public class GlavnaAktivnost extends AppCompatActivity implements AdapterView.On
         Intent intent = new Intent(this, Grafici.class); // this nas aktiviti zove Grafici.class
         intent.putExtra("pozicijaMoja",pozicija);
         intent.putExtra("idSenzora",listaSenzoraMoja.getData().get(pozicija).getIdSmetersId());
+        // TODO Ignore this field, not using it
         intent.putExtra("ipSenzora",listaSenzoraMoja.getData().get(pozicija).getIpAddress());
         startActivity(intent);
 
