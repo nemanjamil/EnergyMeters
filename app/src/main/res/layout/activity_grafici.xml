@@ -17,7 +17,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:inputType="textMultiLine"
-        android:text="Naslov"
+        android:text=""
         android:textSize="12sp" />
 
     <com.github.mikephil.charting.charts.BarChart
