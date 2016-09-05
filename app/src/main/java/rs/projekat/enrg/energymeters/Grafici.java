@@ -200,7 +200,7 @@ public class Grafici extends AppCompatActivity {
         xAxis.setGranularity(1f);
         xAxis.setLabelRotationAngle(270);
 
-        // TODO remove labels from x Axis
+        // puts measurement id as label
         xAxis.setValueFormatter(new MyAxisValueFormatter(graficiTip));
 
         // Determine maximum value for Y axis
@@ -209,12 +209,6 @@ public class Grafici extends AppCompatActivity {
             if (max_y < graficiTip.getData().get(i).getConsumption().floatValue())
                 max_y = graficiTip.getData().get(i).getConsumption().floatValue();
         }
-
-//        float ceil = (float) Math.ceil(max_y);
-//        if (max_y < ceil - 0.5f)
-//            max_y = ceil;
-//        else
-//            max_y = ceil - 0.5f;
 
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.setAxisMinValue(0.0f);

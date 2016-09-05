@@ -31,13 +31,14 @@ public class MyAxisValueFormatter implements AxisValueFormatter {
 
         for (PodaciGrafik pg : graficiTip.getData()) {
             try {
+                // THE WHOLE CONSTRUCOTOR IS IGNORED at the moment
                 // Pack "from date" in specific format
                 sdf.applyPattern(Constants.DATE_FORMAT_JSON);
                 Date d1 = sdf.parse(pg.getDateTimeFrom());
                 sdf.applyPattern(Constants.DATE_FORMAT_CHART_LABEL);
                 String l1 = sdf.format(d1);
 
-                // Pack "from date" in specific format
+                // Pack "to date" in specific format
                 sdf.applyPattern(Constants.DATE_FORMAT_JSON);
                 Date d2 = sdf.parse(pg.getDateTimeTo());
                 sdf.applyPattern(Constants.DATE_FORMAT_CHART_LABEL);
@@ -57,13 +58,9 @@ public class MyAxisValueFormatter implements AxisValueFormatter {
     @Override
     public String getFormattedValue(float value, AxisBase axis) {
         // Prepare xAxis values
-        //return labels.get((int) value);
         int index = ((int) value);
         int novaVar = graficiTip.getData().get(index).getMeasurementId();
         String s = String.valueOf(novaVar);
-        // TODO do we need xAxis labels at all
-//            if ((int)value - 1 <  graficiTip.getData().size())
-//                s = graficiTip.getData().get((int)value - 1).getTypeChar();
         return s;
     }
 
